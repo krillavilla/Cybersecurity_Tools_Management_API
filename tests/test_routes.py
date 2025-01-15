@@ -3,11 +3,10 @@ from app import app, db
 from app.models import Tool
 
 
-class ToolTestCase(unittest.TestCase):
+class APITestCase(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
-        db.create_all()
 
     def test_get_tools(self):
         response = self.app.get('/tools')
@@ -16,8 +15,12 @@ class ToolTestCase(unittest.TestCase):
     def test_create_tool(self):
         response = self.app.post('/tools', json={
             'name': 'New Tool',
-            'category': 'Malware Analysis',
-            'platform': 'Windows',
-            'license': 'GPL'
+            'category': 'Category',
+            'platform': 'Platform',
+            'license': 'License'
         })
         self.assertEqual(response.status_code, 201)
+
+
+if __name__ == '__main__':
+    unittest.main()
