@@ -1,0 +1,18 @@
+import unittest
+from app import create_app
+from app.auth import get_jwt_token  # Assuming you have a function to get the JWT token
+
+class TestAuth(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app('testing')
+        self.client = self.app.test_client()
+
+    def test_token_authentication(self):
+        token = get_jwt_token('username', 'password')  # Simulate getting a JWT token
+        headers = {'Authorization': f'Bearer {token}'}
+        response = self.client.get('/tools', headers=headers)
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_token(self):
+        response = self.client.get('/tools', headers={'Authorization': 'Bearer invalid_token'})
+        self.assertEqual(response.status_code, 401)

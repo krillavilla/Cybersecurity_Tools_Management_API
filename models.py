@@ -1,11 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 
+# Use the db instance initialized in the main app
 db = SQLAlchemy()
-
 
 class Tool(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(256), nullable=True)
     category = db.Column(db.String(50))
     platform = db.Column(db.String(50))
     license = db.Column(db.String(50))
@@ -17,6 +18,7 @@ class Tool(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'description': self.description,
             'category': self.category,
             'platform': self.platform,
             'license': self.license,
