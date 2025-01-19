@@ -1,27 +1,25 @@
-import jwt
-from functools import wraps
 from flask import request, abort
-import os
+from functools import wraps
+from flask_jwt_extended import verify_jwt_in_request, get_jwt
+
 
 def requires_auth(permission):
-    def wrapper(f):
+    """
+    A decorator to enforce role-based access control (RBAC) on Flask routes.
+
+    Args:
+        permission (str): The required permission to access the route.
+
+    Returns:
+        function: The decorated function with RBAC enforced.
+    """
+    def decorator(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
-            auth_header = request.headers.get('Authorization', None)
-            if not auth_header:
-                abort(401)
-
-            try:
-                token = auth_header.split()[1]
-                secret_key = os.getenv('JWT_SECRET_KEY', 'your-jwt-secret')  # Fetch secret from environment variables
-                payload = jwt.decode(token, secret_key, algorithms=["HS256"])
-                if permission not in payload['permissions']:
-                    abort(403)
-            except Exception:
-                abort(401)
-
+        def wrapper(*args, **kwargs):
+            verify_jwt_in_request()
+            claims = get_jwt()
+            if "permissions" not in claims or permission not in claims["permissions"]:
+                abort(403, description="Permission not found.")
             return f(*args, **kwargs)
-
-        return decorated_function
-
-    return wrapper
+        return wrapper
+    return decorator

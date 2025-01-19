@@ -1,15 +1,17 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
-# Use the db instance initialized in the main app
 db = SQLAlchemy()
+
 
 class Tool(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(256), nullable=True)
-    category = db.Column(db.String(50))
-    platform = db.Column(db.String(50))
-    license = db.Column(db.String(50))
+    name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(250), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('tools', lazy=True))
 
     def __repr__(self):
         return f'<Tool {self.name}>'
@@ -19,17 +21,15 @@ class Tool(db.Model):
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'category': self.category,
-            'platform': self.platform,
-            'license': self.license,
+            'created_at': self.created_at,
+            'user_id': self.user_id
         }
 
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    role = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -38,6 +38,5 @@ class User(db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email,
-            'role': self.role,
+            'email': self.email
         }

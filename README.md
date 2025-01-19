@@ -3,7 +3,7 @@
 
 # Cybersecurity Tools Management API
 
-The **Cybersecurity Tools Management API** is a centralized platform for managing a variety of cybersecurity tools. This API streamlines workflows for cybersecurity professionals by providing an organized and efficient system to integrate and utilize tools effectively.
+The **Cybersecurity Tools Management API** is a centralized platform designed to streamline the organization and utilization of cybersecurity tools. It empowers cybersecurity professionals with efficient workflows and secure access to a wide array of tools.
 
 ---
 
@@ -16,15 +16,16 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
 ## Authentication Setup
 
 1. **Set up Auth0**:  
-   - Create an Auth0 account and set up a new application.  
-   - Configure the API by setting the following in your `.env` file:
+   - Sign up for an Auth0 account and create a new application.  
+   - Configure your API settings and add the following in your `.env` file:
      ```env
      AUTH0_DOMAIN=your-auth0-domain
      API_IDENTIFIER=your-api-identifier
      ```
+   - Update your Auth0 rules to include the necessary permissions for each endpoint.
 
-2. **Update the `requires_auth` decorator**:  
-   Modify the `requires_auth` function in `app/auth.py` to utilize your Auth0 credentials.
+2. **Configure the `requires_auth` decorator**:  
+   Ensure the `requires_auth` function in `app/auth.py` uses the appropriate Auth0 credentials for token validation and permission checks.
 
 ---
 
@@ -33,9 +34,9 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
 ### Endpoints
 
 #### **GET /tools**
-- **Description**: Retrieve a list of all cybersecurity tools.
-- **Permissions**: `read:tools`
-- **Response**:
+- **Description**: Retrieves a list of all available cybersecurity tools.
+- **Required Permissions**: `read:tools`
+- **Response Example**:
   ```json
   [
     {
@@ -47,9 +48,9 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
   ```
 
 #### **GET /tools/<int:tool_id>**
-- **Description**: Retrieve details of a specific tool.
-- **Permissions**: `read:tools`
-- **Response**:
+- **Description**: Retrieves details for a specific tool.
+- **Required Permissions**: `read:tools`
+- **Response Example**:
   ```json
   {
     "id": 1,
@@ -59,16 +60,16 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
   ```
 
 #### **POST /tools**
-- **Description**: Add a new cybersecurity tool.
-- **Permissions**: `create:tools`
-- **Request Body**:
+- **Description**: Adds a new cybersecurity tool to the database.
+- **Required Permissions**: `create:tools`
+- **Request Body Example**:
   ```json
   {
     "name": "Tool Name",
     "description": "Tool Description"
   }
   ```
-- **Response**:
+- **Response Example**:
   ```json
   {
     "id": 1,
@@ -78,16 +79,16 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
   ```
 
 #### **PATCH /tools/<int:tool_id>**
-- **Description**: Update an existing tool.
-- **Permissions**: `update:tools`
-- **Request Body**:
+- **Description**: Updates an existing tool.
+- **Required Permissions**: `update:tools`
+- **Request Body Example**:
   ```json
   {
     "name": "Updated Tool Name",
     "description": "Updated Description"
   }
   ```
-- **Response**:
+- **Response Example**:
   ```json
   {
     "id": 1,
@@ -97,22 +98,22 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
   ```
 
 #### **DELETE /tools/<int:tool_id>**
-- **Description**: Delete a specific tool.
-- **Permissions**: `delete:tools`
-- **Response**:  
-  Status code `204` (No Content) on success.
+- **Description**: Deletes a tool from the database.
+- **Required Permissions**: `delete:tools`
+- **Response**: Status code `204` (No Content).
 
 ---
 
 ## Error Handling
 
-The API handles the following error codes:
+The API returns the following error codes in JSON format:
 - **400**: Bad Request  
 - **401**: Unauthorized  
 - **403**: Forbidden  
 - **404**: Not Found  
+- **500**: Internal Server Error  
 
-Each error response is returned in JSON format:
+Example error response:
 ```json
 {
   "success": false,
@@ -125,24 +126,21 @@ Each error response is returned in JSON format:
 
 ## Role-Based Access Control (RBAC)
 
-- **`read:tools`**: Allows viewing the list of tools.
-- **`create:tools`**: Allows adding new tools.
-- **`update:tools`**: Allows updating existing tools.
-- **`delete:tools`**: Allows deleting tools.
-
-Ensure these permissions are set up correctly in the Auth0 dashboard and assigned to appropriate user roles.
+Define and assign the following permissions in the Auth0 dashboard:
+- **`read:tools`**: View tools.
+- **`create:tools`**: Add new tools.
+- **`update:tools`**: Edit existing tools.
+- **`delete:tools`**: Remove tools.
 
 ---
 
 ## Local Development and Hosting Instructions
 
 ### Prerequisites
-
 - Python 3.8+
-- Flask
-- Flask-JWT-Extended
+- Flask and Flask-JWT-Extended
 - Gunicorn
-- Requests
+- Requests library
 
 ### Setting Up the Project
 
@@ -163,47 +161,47 @@ Ensure these permissions are set up correctly in the Auth0 dashboard and assigne
    pip install -r requirements.txt
    ```
 
-### Running the Development Server
-
-1. **Set up environment variables**:  
-   Create a `.env` file in the root directory with the following content:
+4. **Set up environment variables**:
+   Create a `.env` file in the root directory:
    ```env
    AUTH0_DOMAIN=your-auth0-domain
    API_IDENTIFIER=your-api-identifier
    ```
 
-2. **Run the server**:
-   ```bash
-   flask run
-   ```
+### Running the Development Server
+
+Start the application:
+```bash
+flask run
+```
 
 ---
 
 ## Testing
 
-To run the test suite:
+Run the test suite using:
 ```bash
-python -m unittest discover
+python -m unittest discover -s tests
 ```
 
 ---
 
 ## Hosting Instructions
 
-1. **Create a `Procfile`**:  
-   Add the following content to a `Procfile` in the root directory:
-   ```text
-   web: gunicorn app:app
-   ```
+1. **Prepare the application for deployment**:
+   - Create a `Procfile` with the following content:
+     ```text
+     web: gunicorn app:app
+     ```
 
-2. **Deploy to a hosting provider**:  
-   Use your hosting provider’s instructions (e.g., Heroku, AWS) to deploy the application.
+2. **Deploy using a hosting provider**:
+   Follow the provider-specific instructions (e.g., Heroku, AWS, etc.) to deploy the app.
 
 ---
 
 ## Conclusion
 
-The Cybersecurity Tools Management API provides a secure and efficient way to manage various cybersecurity tools. With robust authentication, role-based access control, and a clear API structure, this project serves as a reliable solution for cybersecurity professionals. Follow the instructions above to set up, develop, and deploy the application.
+The **Cybersecurity Tools Management API** is a robust solution for managing cybersecurity tools. Its secure design, role-based access control, and efficient API endpoints make it an essential tool for cybersecurity professionals. For setup assistance or contributions, refer to the instructions above.
 
 --- 
 
