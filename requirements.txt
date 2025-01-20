@@ -16,3 +16,4 @@ idna~=3.10
 charset-normalizer~=3.4.1
 SQLAlchemy~=2.0.37
 PyJWT~=2.10.1
+gunicorn~=20.1.0
