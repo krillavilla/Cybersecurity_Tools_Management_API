@@ -5,11 +5,11 @@ db = SQLAlchemy()
 
 
 class Tool(db.Model):
+    __tablename__ = 'tool'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.String(250), nullable=False)
+    name = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('tools', lazy=True))
 
@@ -27,6 +27,7 @@ class Tool(db.Model):
 
 
 class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)

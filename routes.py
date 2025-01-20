@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db, Tool
-from models import Tool, User
+from models import db, Tool, User
 from auth import requires_auth
-from flask import Blueprint, jsonify, request
 
 api_bp = Blueprint('api', __name__)
 
@@ -11,13 +9,12 @@ api_bp = Blueprint('api', __name__)
 # Define the root route
 @api_bp.route('/', methods=['GET'])
 def home():
-    return jsonify({
-        "message": "Welcome to the Cybersecurity Tools Management API!"
-    }), 200
+    return jsonify({"message": "Welcome to the Cybersecurity Tools Management API!"})
+
 
 # GET a specific tool
 @api_bp.route('/tools/<int:tool_id>', methods=['GET'])
-@jwt_required()
+@jwt_required()  # Ensure the request is authorized using JWT
 def get_tool(tool_id):
     tool = Tool.query.get(tool_id)
     if tool:
@@ -27,41 +24,45 @@ def get_tool(tool_id):
 
 # POST a new tool
 @api_bp.route('/tools', methods=['POST'])
-@jwt_required()
-@requires_auth('create:tool')
+@jwt_required()  # Ensure the request is authorized using JWT
+@requires_auth('create:tool')  # Ensure the user has the necessary permissions
 def create_tool():
-    data = request.get_json()
-    if not data or not 'name' in data or not 'description' in data:
-        return jsonify({"error": "Invalid input"}), 400
+    try:
+        data = request.get_json()
+        if not data or not 'name' in data or not 'description' in data:
+            return jsonify({"error": "Invalid input"}), 400
 
-    # Sanitize inputs
-    name = data['name'].strip()
-    description = data['description'].strip()
+        # Sanitize inputs
+        name = data['name'].strip()
+        description = data['description'].strip()
 
-    # Create and save the new tool
-    new_tool = Tool(name=name, description=description, user_id=current_user.id)
-    db.session.add(new_tool)
-    db.session.commit()
+        # Get the user ID from the JWT token
+        user_id = get_jwt_identity()
 
-    return jsonify(new_tool.serialize()), 201
+        # Create and save the new tool
+        new_tool = Tool(name=name, description=description, user_id=user_id)
+        db.session.add(new_tool)
+        db.session.commit()
+
+        return jsonify(new_tool.serialize()), 201
+    except Exception as e:
+        db.session.rollback()  # Rollback any changes if an error occurs
+        return jsonify({"error": str(e)}), 500
 
 
 # GET all tools
-@requires_auth('read:tools')
 @api_bp.route('/tools', methods=['GET'])
-@jwt_required()
+@jwt_required()  # Ensure the request is authorized using JWT
+@requires_auth('read:tools')  # Ensure the user has the necessary permissions
 def get_tools():
-    tools = Tool.query.all()
-    return jsonify([tool.serialize() for tool in tools])
-
-
-
+    tools_list = Tool.query.all()  # Fetch all tools from the database
+    return jsonify({"tools": [tool.serialize() for tool in tools_list]})
 
 
 # PATCH an existing tool
 @api_bp.route('/tools/<int:tool_id>', methods=['PATCH'])
-@jwt_required()
-@requires_auth('update:tool')
+@jwt_required()  # Ensure the request is authorized using JWT
+@requires_auth('update:tool')  # Ensure the user has the necessary permissions
 def update_tool(tool_id):
     tool = Tool.query.get(tool_id)
     if not tool:
@@ -75,8 +76,8 @@ def update_tool(tool_id):
 
 # DELETE a tool
 @api_bp.route('/tools/<int:tool_id>', methods=['DELETE'])
-@jwt_required()
-@requires_auth('delete:tool')
+@jwt_required()  # Ensure the request is authorized using JWT
+@requires_auth('delete:tool')  # Ensure the user has the necessary permissions
 def delete_tool(tool_id):
     tool = Tool.query.get(tool_id)
     if not tool:
@@ -88,13 +89,14 @@ def delete_tool(tool_id):
 
 # GET all users
 @api_bp.route('/users', methods=['GET'])
-@jwt_required()
+@jwt_required()  # Ensure the request is authorized using JWT
 def get_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users])
 
 
-# Add a Dummy Favicon Route
-@api_bp.route('/favicon.ico')
-def favicon():
-    return "", 204
+# Protected route
+@api_bp.route('/secure-route', methods=['GET'])
+@jwt_required()  # Ensure the request is authorized using JWT
+def secure_route():
+    return jsonify({"message": "Secure content"})
