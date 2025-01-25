@@ -1,31 +1,134 @@
 
----
-
 # Cybersecurity Tools Management API
 
 The **Cybersecurity Tools Management API** is a centralized platform designed to streamline the organization and utilization of cybersecurity tools. It empowers cybersecurity professionals with efficient workflows and secure access to a wide array of tools.
 
 ---
 
-## Hosted API URL
+## Motivation
 
-The API is hosted at: [https://securityapp/](https://securityapp/)
+The goal of this project is to create a backend API that manages a centralized repository of cybersecurity tools, including role-based access control for various users (e.g., tool administrators and users). 
+
+This project demonstrates skills in backend development, secure authentication using Auth0, database management, and deploying scalable APIs on platforms like Heroku. It is designed to solve real-world problems in the cybersecurity domain by organizing tools into functional categories and ensuring secure and efficient access for users.
 
 ---
 
-## Authentication Setup
+## Hosted API URL
 
-1. **Set up Auth0**:  
-   - Sign up for an Auth0 account and create a new application.  
-   - Configure your API settings and add the following in your `.env` file:
-     ```env
-     AUTH0_DOMAIN=your-auth0-domain
-     API_IDENTIFIER=your-api-identifier
-     ```
-   - Update your Auth0 rules to include the necessary permissions for each endpoint.
+The API is hosted live at: **[https://securityapp.herokuapp.com](https://securityapp.herokuapp.com)**  
 
-2. **Configure the `requires_auth` decorator**:  
-   Ensure the `requires_auth` function in `app/auth.py` uses the appropriate Auth0 credentials for token validation and permission checks.
+---
+
+## Project Description
+
+The Cybersecurity Tools Management API allows users to:
+- Manage a centralized repository of cybersecurity tools.
+- Perform CRUD (Create, Read, Update, Delete) operations on tools.
+- Secure the API using role-based access control (RBAC).
+- Access tools based on user roles and permissions.
+
+Roles in this project include:
+1. **Tool Viewer**: Can view tools.
+2. **Tool Editor**: Can view and edit tools.
+3. **Tool Admin**: Has full access to the tools (create, read, update, delete).
+
+---
+
+## Dependencies
+
+This project uses the following major dependencies:
+- **Flask**: For building the web API.
+- **SQLAlchemy**: For database interactions.
+- **Flask-Migrate**: To manage database migrations.
+- **Auth0**: For secure user authentication and role-based access control.
+- **Gunicorn**: A Python WSGI HTTP server for running the application in production.
+- **Heroku**: For deploying and hosting the API.
+- **Unittest**: For testing the application.
+
+For the full list of dependencies, refer to `requirements.txt`.
+
+---
+
+## Local Development and Setup
+
+### Prerequisites
+- Python 3.8 or later
+- Virtual Environment (recommended)
+- Flask CLI installed
+- PostgreSQL database running locally or remotely
+
+### Steps to Run Locally
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/krillavilla/Cybersecurity_Tools_Management_API.git
+   cd Cybersecurity_Tools_Management_API
+   ```
+
+2. **Create and Activate a Virtual Environment**:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Project Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory:
+   ```env
+   FLASK_APP=app.py
+   FLASK_ENV=development
+   DATABASE_URL=your_postgresql_database_url
+   AUTH0_DOMAIN=your-auth0-domain
+   API_IDENTIFIER=your-api-identifier
+   ```
+
+5. **Run Database Migrations**:
+   ```bash
+   flask db upgrade
+   ```
+
+6. **Start the Development Server**:
+   ```bash
+   flask run
+   ```
+   The API will be available at `http://127.0.0.1:5000`.
+
+---
+
+## Hosting Instructions (Heroku)
+
+1. **Install the Heroku CLI**:
+   [Heroku CLI Installation Guide](https://devcenter.heroku.com/articles/heroku-cli)
+
+2. **Login to Heroku**:
+   ```bash
+   heroku login
+   ```
+
+3. **Create a New Heroku App**:
+   ```bash
+   heroku create your-app-name
+   ```
+
+4. **Set Environment Variables on Heroku**:
+   - Go to your Heroku dashboard.
+   - Navigate to **Settings** → **Reveal Config Vars**.
+   - Add the following variables:
+     - `DATABASE_URL`: Your PostgreSQL database URL.
+     - `AUTH0_DOMAIN`: Your Auth0 domain.
+     - `API_IDENTIFIER`: Your API identifier.
+
+5. **Deploy to Heroku**:
+   ```bash
+   git push heroku main
+   ```
+
+6. **Access Your API**:
+   Your API will be live at `https://your-app-name.herokuapp.com`.
 
 ---
 
@@ -34,91 +137,42 @@ The API is hosted at: [https://securityapp/](https://securityapp/)
 ### Endpoints
 
 #### **GET /tools**
-- **Description**: Retrieves a list of all available cybersecurity tools.
+- **Description**: Retrieve a list of all tools.
 - **Required Permissions**: `read:tools`
-- **Response Example**:
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "Tool Name",
-      "description": "Tool Description"
-    }
-  ]
-  ```
-
-#### **GET /tools/<int:tool_id>**
-- **Description**: Retrieves details for a specific tool.
-- **Required Permissions**: `read:tools`
-- **Response Example**:
-  ```json
-  {
-    "id": 1,
-    "name": "Tool Name",
-    "description": "Tool Description"
-  }
-  ```
 
 #### **POST /tools**
-- **Description**: Adds a new cybersecurity tool to the database.
+- **Description**: Add a new tool.
 - **Required Permissions**: `create:tools`
-- **Request Body Example**:
-  ```json
-  {
-    "name": "Tool Name",
-    "description": "Tool Description"
-  }
-  ```
-- **Response Example**:
-  ```json
-  {
-    "id": 1,
-    "name": "Tool Name",
-    "description": "Tool Description"
-  }
-  ```
 
-#### **PATCH /tools/<int:tool_id>**
-- **Description**: Updates an existing tool.
+#### **PATCH /tools/<tool_id>**
+- **Description**: Update an existing tool.
 - **Required Permissions**: `update:tools`
-- **Request Body Example**:
-  ```json
-  {
-    "name": "Updated Tool Name",
-    "description": "Updated Description"
-  }
-  ```
-- **Response Example**:
-  ```json
-  {
-    "id": 1,
-    "name": "Updated Tool Name",
-    "description": "Updated Description"
-  }
-  ```
 
-#### **DELETE /tools/<int:tool_id>**
-- **Description**: Deletes a tool from the database.
+#### **DELETE /tools/<tool_id>**
+- **Description**: Delete a tool.
 - **Required Permissions**: `delete:tools`
-- **Response**: Status code `204` (No Content).
+
+For detailed request/response examples, refer to the `API_REFERENCE.md` file in the repository.
+
+---
+
+## Testing the API
+
+To run the test suite:
+```bash
+python -m unittest discover -s tests
+```
 
 ---
 
 ## Error Handling
 
-The API returns the following error codes in JSON format:
-- **400**: Bad Request  
-- **401**: Unauthorized  
-- **403**: Forbidden  
-- **404**: Not Found  
-- **500**: Internal Server Error  
-
-Example error response:
+The API provides standard error responses in the following format:
 ```json
 {
   "success": false,
   "error": 404,
-  "message": "Not Found"
+  "message": "Resource Not Found"
 }
 ```
 
@@ -126,82 +180,21 @@ Example error response:
 
 ## Role-Based Access Control (RBAC)
 
-Define and assign the following permissions in the Auth0 dashboard:
+### Permissions
 - **`read:tools`**: View tools.
-- **`create:tools`**: Add new tools.
-- **`update:tools`**: Edit existing tools.
+- **`create:tools`**: Add tools.
+- **`update:tools`**: Edit tools.
 - **`delete:tools`**: Remove tools.
 
----
-
-## Local Development and Hosting Instructions
-
-### Prerequisites
-- Python 3.8+
-- Flask and Flask-JWT-Extended
-- Gunicorn
-- Requests library
-
-### Setting Up the Project
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/krillavilla/Cybersecurity_Tools_Management_API.git
-   cd Cybersecurity_Tools_Management_API
-   ```
-
-2. **Create a virtual environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables**:
-   Create a `.env` file in the root directory:
-   ```env
-   AUTH0_DOMAIN=your-auth0-domain
-   API_IDENTIFIER=your-api-identifier
-   ```
-
-### Running the Development Server
-
-Start the application:
-```bash
-flask run
-```
-
----
-
-## Testing
-
-Run the test suite using:
-```bash
-python -m unittest discover -s tests
-```
-
----
-
-## Hosting Instructions
-
-1. **Prepare the application for deployment**:
-   - Create a `Procfile` with the following content:
-     ```text
-     web: gunicorn app:app
-     ```
-
-2. **Deploy using a hosting provider**:
-   Follow the provider-specific instructions (e.g., Heroku, AWS, etc.) to deploy the app.
+Assign these permissions to roles in the Auth0 dashboard as needed.
 
 ---
 
 ## Conclusion
 
-The **Cybersecurity Tools Management API** is a robust solution for managing cybersecurity tools. Its secure design, role-based access control, and efficient API endpoints make it an essential tool for cybersecurity professionals. For setup assistance or contributions, refer to the instructions above.
+The **Cybersecurity Tools Management API** is a robust backend solution designed to support cybersecurity professionals in managing and accessing tools securely. With its efficient RBAC implementation and scalable architecture, this project showcases best practices in modern API development.
+
+For further assistance, open an issue on GitHub or reach out via the repository.
 
 --- 
 
