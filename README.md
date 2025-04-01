@@ -9,13 +9,13 @@ The **Cybersecurity Tools Management API** is a centralized platform designed to
 
 The goal of this project is to create a backend API that manages a centralized repository of cybersecurity tools, including role-based access control for various users (e.g., tool administrators and users). 
 
-This project demonstrates skills in backend development, secure authentication using Auth0, database management, and deploying scalable APIs on platforms like Heroku. It is designed to solve real-world problems in the cybersecurity domain by organizing tools into functional categories and ensuring secure and efficient access for users.
+This project demonstrates skills in backend development, secure authentication using Auth0, database management, and deploying scalable APIs on platforms like Render. It is designed to solve real-world problems in the cybersecurity domain by organizing tools into functional categories and ensuring secure and efficient access for users.
 
 ---
 
 ## Hosted API URL
 
-The API is hosted live at: **[https://securityapp.herokuapp.com](https://securityapp.herokuapp.com)**  
+The API is hosted live at: **[https://cybersecurity-tools-api.onrender.com](https://cybersecurity-tools-api.onrender.com)**  
 
 ---
 
@@ -42,7 +42,7 @@ This project uses the following major dependencies:
 - **Flask-Migrate**: To manage database migrations.
 - **Auth0**: For secure user authentication and role-based access control.
 - **Gunicorn**: A Python WSGI HTTP server for running the application in production.
-- **Heroku**: For deploying and hosting the API.
+- **Render**: For deploying and hosting the API.
 - **Unittest**: For testing the application.
 
 For the full list of dependencies, refer to `requirements.txt`.
@@ -99,36 +99,35 @@ For the full list of dependencies, refer to `requirements.txt`.
 
 ---
 
-## Hosting Instructions (Heroku)
+## Hosting Instructions (Render)
 
-1. **Install the Heroku CLI**:
-   [Heroku CLI Installation Guide](https://devcenter.heroku.com/articles/heroku-cli)
+1. **Create a Render Account**:
+   Sign up for a free account at [Render](https://render.com/).
 
-2. **Login to Heroku**:
-   ```bash
-   heroku login
-   ```
+2. **Connect Your GitHub Repository**:
+   - In the Render dashboard, click on "New" and select "Blueprint".
+   - Connect your GitHub account and select your repository.
 
-3. **Create a New Heroku App**:
-   ```bash
-   heroku create your-app-name
-   ```
+3. **Configure Your Blueprint**:
+   - Render will automatically detect the `render.yaml` file in your repository.
+   - Review the configuration and click "Apply".
 
-4. **Set Environment Variables on Heroku**:
-   - Go to your Heroku dashboard.
-   - Navigate to **Settings** → **Reveal Config Vars**.
+4. **Set Environment Variables**:
+   - After the services are created, go to the web service dashboard.
+   - Navigate to **Environment** → **Environment Variables**.
    - Add the following variables:
-     - `DATABASE_URL`: Your PostgreSQL database URL.
      - `AUTH0_DOMAIN`: Your Auth0 domain.
+     - `API_AUDIENCE`: Your API audience.
      - `API_IDENTIFIER`: Your API identifier.
+     - `AUTH0_CLIENT_ID`: Your Auth0 client ID.
+     - `AUTH0_CLIENT_SECRET`: Your Auth0 client secret.
 
-5. **Deploy to Heroku**:
-   ```bash
-   git push heroku main
-   ```
+5. **Deploy Your API**:
+   - Render will automatically deploy your API when you push changes to your repository.
+   - You can also manually deploy from the Render dashboard.
 
 6. **Access Your API**:
-   Your API will be live at `https://your-app-name.herokuapp.com`.
+   Your API will be live at `https://cybersecurity-tools-api.onrender.com` (or your custom domain).
 
 ---
 
@@ -153,6 +152,22 @@ For the full list of dependencies, refer to `requirements.txt`.
 - **Required Permissions**: `delete:tools`
 
 For detailed request/response examples, refer to the `API_REFERENCE.md` file in the repository.
+
+---
+
+## Security Measures
+
+The Cybersecurity Tools Management API implements comprehensive security measures to protect sensitive information while maintaining application functionality:
+
+- **Environment Variable Management**: All sensitive information (API keys, secrets, credentials) is loaded from environment variables with strict validation.
+- **No Default Secrets**: The application requires proper environment variables to be set and will not run with insecure defaults.
+- **Secure Authentication**: JWT tokens are thoroughly validated for format, signature, expiration, and permissions.
+- **Role-Based Access Control**: All endpoints are protected based on user roles and required permissions.
+- **Secure Error Handling**: Error responses provide useful information without exposing sensitive details.
+- **Secure Testing**: Test files use clearly marked mock tokens and isolated test environments.
+- **Version Control Security**: The `.gitignore` file is configured to exclude sensitive files from version control.
+
+For detailed information about security measures and best practices, refer to the [Security Guide](SECURITY.md).
 
 ---
 
@@ -186,7 +201,38 @@ The API provides standard error responses in the following format:
 - **`update:tools`**: Edit tools.
 - **`delete:tools`**: Remove tools.
 
-Assign these permissions to roles in the Auth0 dashboard as needed.
+### Roles
+- **Tool Viewer**: Can view tools.
+  - Permissions: `read:tools`
+- **Tool Editor**: Can view and edit tools.
+  - Permissions: `read:tools`, `update:tools`
+- **Tool Admin**: Has full access to tools.
+  - Permissions: `read:tools`, `create:tools`, `update:tools`, `delete:tools`
+
+### Setting Up Authentication
+
+1. **Configure Auth0**:
+   - Create an account on [Auth0](https://auth0.com/)
+   - Create a new API in your Auth0 dashboard
+   - Set the Identifier to `https://securityapp/`
+   - Enable RBAC and Add Permissions in the Access Token
+
+2. **Set Up Roles and Permissions**:
+   - Create the roles listed above in your Auth0 dashboard
+   - Assign the appropriate permissions to each role
+
+3. **Update Environment Variables**:
+   - Update the `setup.sh` file with your Auth0 domain, API audience, and client ID
+   - Run `source setup.sh` to set the environment variables
+
+4. **Obtain a Token**:
+   - You can use the provided `sending_token_API.py` script to obtain a token
+   - Alternatively, you can use the Auth0 Management API or the Auth0 Dashboard to create test users and assign them to roles
+   - Use the Auth0 Authentication API to obtain a token for a user with the appropriate role
+
+For detailed instructions on obtaining tokens, refer to the [Authentication Guide](AUTH_GUIDE.md).
+
+For testing purposes, you can use the provided mock tokens in the test files.
 
 ---
 
@@ -197,4 +243,3 @@ The **Cybersecurity Tools Management API** is a robust backend solution designed
 For further assistance, open an issue on GitHub or reach out via the repository.
 
 --- 
-

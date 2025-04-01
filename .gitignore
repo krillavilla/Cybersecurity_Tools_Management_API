@@ -52,9 +52,19 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Database files
 db.sqlite3
+*.sqlite3
+*.db
+*.sqlite
+*.db-journal
 
 # Flask stuff:
 instance/
@@ -88,6 +98,9 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+.flaskenv
+.flaskenv.*
 .venv
 env/
 venv/
@@ -112,3 +125,77 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Database files
+*.sqlite3
+*.db-journal
+
+# Environment variables
+.env.*
+.flaskenv
+.flaskenv.*
+
+# JWT tokens and credentials
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+*.cer
+*.der
+*.priv
+*.pub
+token.json
+credentials.json
+secrets.json
+auth_config.json
+*_key.json
+*_secret*
+*_token*
+.secret*
+.credentials*
+.auth*
+
+# Local configuration
+config.local.py
+instance/
+local_settings.py
+
+# Backup and temporary files
+*.bak
+*.tmp
+*.temp
+*~
+
+# System specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test coverage and cache
+.coverage.*
+coverage.xml
+*.cover
+htmlcov/
+.pytest_cache/
+.hypothesis/
+.tox/
+.nox/
+
+# Render specific
+__render_*
+.render-buildpacks.json
+.render-project.json
+render-build.log
+render-deploy.log
