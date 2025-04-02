@@ -15,7 +15,7 @@ def home():
 @api_bp.route('/tools/<int:tool_id>', methods=['GET'])
 @requires_auth('read:tools')
 def get_tool(tool_id):
-    tool = Tool.query.get(tool_id)
+    tool = Tool.get_tool(tool_id)
     if tool is None:
         abort(404)
     return jsonify({
@@ -39,14 +39,12 @@ def create_tool():
         user_id = data['user_id']
 
         # Check if user exists
-        user = User.query.get(user_id)
+        user = User.get_user(user_id)
         if user is None:
             abort(404, description="User not found")
 
-        # Create and save the new tool
-        new_tool = Tool(name=name, description=description, user_id=user_id)
-        db.session.add(new_tool)
-        db.session.commit()
+        # Create and save the new tool using the helper method
+        new_tool = Tool.create_tool(name=name, description=description, user_id=user_id)
 
         return jsonify({
             "success": True,
@@ -64,7 +62,7 @@ def create_tool():
 @api_bp.route('/tools', methods=['GET'])
 @requires_auth('read:tools')
 def get_tools():
-    tools_list = Tool.query.all()  # Fetch all tools from the database
+    tools_list = Tool.get_all_tools()  # Fetch all tools using the helper method
     return jsonify({
         "success": True,
         "tools": [tool.serialize() for tool in tools_list]
@@ -75,7 +73,7 @@ def get_tools():
 @api_bp.route('/tools/<int:tool_id>', methods=['PATCH'])
 @requires_auth('update:tools')
 def update_tool(tool_id):
-    tool = Tool.query.get(tool_id)
+    tool = Tool.get_tool(tool_id)
     if tool is None:
         abort(404)
 
@@ -84,16 +82,12 @@ def update_tool(tool_id):
         if not data:
             abort(400)
 
-        if 'name' in data:
-            tool.name = data['name']
-        if 'description' in data:
-            tool.description = data['description']
-
-        db.session.commit()
+        # Update the tool using the helper method
+        updated_tool = tool.update(data)
 
         return jsonify({
             "success": True,
-            "tool": tool.serialize()
+            "tool": updated_tool.serialize()
         })
     except Exception:
         db.session.rollback()
@@ -104,17 +98,17 @@ def update_tool(tool_id):
 @api_bp.route('/tools/<int:tool_id>', methods=['DELETE'])
 @requires_auth('delete:tools')
 def delete_tool(tool_id):
-    tool = Tool.query.get(tool_id)
+    tool = Tool.get_tool(tool_id)
     if tool is None:
         abort(404)
 
     try:
-        db.session.delete(tool)
-        db.session.commit()
+        # Delete the tool using the helper method
+        deleted_id = tool.delete()
 
         return jsonify({
             "success": True,
-            "deleted": tool_id
+            "deleted": deleted_id
         })
     except Exception:
         db.session.rollback()
@@ -125,7 +119,7 @@ def delete_tool(tool_id):
 @api_bp.route('/users', methods=['GET'])
 @requires_auth('read:tools')
 def get_users():
-    users = User.query.all()
+    users = User.get_all_users()  # Fetch all users using the helper method
     return jsonify({
         "success": True,
         "users": [user.serialize() for user in users]
