@@ -87,7 +87,13 @@ For the full list of dependencies, refer to `requirements.txt`.
    flask db upgrade
    ```
 
-6. **Start the Development Server**:
+6. **Populate the Database with Sample Data**:
+   ```bash
+   python populate_db.py
+   ```
+   This script creates sample users and tools for testing purposes. It's safe to run multiple times as it checks for existing data before creating new entries.
+
+7. **Start the Development Server**:
    ```bash
    flask run
    ```
@@ -146,6 +152,39 @@ For the full list of dependencies, refer to `requirements.txt`.
 #### **DELETE /tools/<tool_id>**
 - **Description**: Delete a tool.
 - **Required Permissions**: `delete:tools`
+
+### Example API Requests
+
+Here are some example curl commands to interact with the API:
+
+```bash
+# Get all tools (requires Tool Viewer, Editor, or Admin role)
+curl -H "Authorization: Bearer $TOOL_VIEWER_TOKEN" https://cybersecurity-tools-api.onrender.com/api/tools
+
+# Get a specific tool by ID (requires Tool Viewer, Editor, or Admin role)
+curl -H "Authorization: Bearer $TOOL_VIEWER_TOKEN" https://cybersecurity-tools-api.onrender.com/api/tools/1
+
+# Create a new tool (requires Tool Admin role)
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOOL_ADMIN_TOKEN" \
+  -d '{"name":"New Tool", "description":"A new cybersecurity tool", "user_id":1}' \
+  https://cybersecurity-tools-api.onrender.com/api/tools
+
+# Update a tool (requires Tool Editor or Admin role)
+curl -X PATCH \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOOL_EDITOR_TOKEN" \
+  -d '{"name":"Updated Tool Name"}' \
+  https://cybersecurity-tools-api.onrender.com/api/tools/1
+
+# Delete a tool (requires Tool Admin role)
+curl -X DELETE \
+  -H "Authorization: Bearer $TOOL_ADMIN_TOKEN" \
+  https://cybersecurity-tools-api.onrender.com/api/tools/1
+```
+
+Replace `$TOOL_VIEWER_TOKEN`, `$TOOL_EDITOR_TOKEN`, and `$TOOL_ADMIN_TOKEN` with actual tokens for the respective roles. You can obtain these tokens using the `sending_token_API.py` script as described in the Authentication Guide.
 
 For detailed request/response examples, refer to the `API_REFERENCE.md` file in the repository.
 
