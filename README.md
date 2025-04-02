@@ -77,14 +77,10 @@ For the full list of dependencies, refer to `requirements.txt`.
    ```
 
 4. **Set Up Environment Variables**:
-   Create a `.env` file in the root directory:
-   ```env
-   FLASK_APP=app.py
-   FLASK_ENV=development
-   DATABASE_URL=your_postgresql_database_url
-   AUTH0_DOMAIN=your-auth0-domain
-   API_IDENTIFIER=your-api-identifier
-   ```
+   - Copy the `.env.example` file to `.env`: `cp .env.example .env`
+   - Update the `.env` file with your actual values for database URL, Auth0 domain, API identifier, and other sensitive information
+   - Alternatively, you can use the `setup.sh` script (see instructions below)
+   - Note: Both `.env` and `setup.sh` contain sensitive information and should not be committed to the repository
 
 5. **Run Database Migrations**:
    ```bash
@@ -167,6 +163,16 @@ The Cybersecurity Tools Management API implements comprehensive security measure
 - **Secure Testing**: Test files use clearly marked mock tokens and isolated test environments.
 - **Version Control Security**: The `.gitignore` file is configured to exclude sensitive files from version control.
 
+### Handling Sensitive Information
+
+To ensure your sensitive information remains secure:
+
+1. **Use Example Files**: The repository includes `.env.example` and `setup.sh.example` files with placeholder values. Copy these to `.env` and `setup.sh` respectively and update with your actual values.
+2. **Never Commit Secrets**: Files containing sensitive information (`.env`, `setup.sh`) are excluded in `.gitignore` and should never be committed to version control.
+3. **Rotate Compromised Secrets**: If you accidentally commit sensitive information, consider it compromised and rotate those credentials immediately.
+4. **Use Environment-Specific Values**: Use different credentials for development, testing, and production environments.
+5. **Limit Access**: Restrict access to production credentials to only those who absolutely need them.
+
 For detailed information about security measures and best practices, refer to the [Security Guide](SECURITY.md).
 
 ---
@@ -222,8 +228,10 @@ The API provides standard error responses in the following format:
    - Assign the appropriate permissions to each role
 
 3. **Update Environment Variables**:
-   - Update the `setup.sh` file with your Auth0 domain, API audience, and client ID
+   - Copy the `setup.sh.example` file to `setup.sh`: `cp setup.sh.example setup.sh`
+   - Update the `setup.sh` file with your Auth0 domain, API audience, client ID, and other sensitive information
    - Run `source setup.sh` to set the environment variables
+   - Note: `setup.sh` contains sensitive information and should not be committed to the repository
 
 4. **Obtain a Token**:
    - You can use the provided `sending_token_API.py` script to obtain a token

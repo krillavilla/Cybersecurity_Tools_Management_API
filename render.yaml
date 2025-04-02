@@ -17,6 +17,10 @@ services:
         sync: false
       - key: AUTH0_CLIENT_SECRET
         sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: cybersecurity-tools-db

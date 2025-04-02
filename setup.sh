@@ -2,6 +2,8 @@
 
 # Auth0 Configuration
 export AUTH0_DOMAIN='udacity-cofshp.us.auth0.com'
+export SECRET_KEY='this-is-a-secret-key-for-local-development-only'
+export JWT_SECRET_KEY='this-is-a-jwt-secret-key-for-local-development-only'
 export API_AUDIENCE='https://securityapp/'
 export API_IDENTIFIER='https://securityapp/'
 export AUTH0_CLIENT_ID='dYfY9fLTPlgVE3kgXuHQFGKLp7MfxgyH'
@@ -15,6 +17,8 @@ export FLASK_APP=app.py
 export FLASK_ENV=development
 
 echo "Environment variables set successfully!"
+echo "SECRET_KEY: [HIDDEN]"
+echo "JWT_SECRET_KEY: [HIDDEN]"
 echo "AUTH0_DOMAIN: $AUTH0_DOMAIN"
 echo "API_AUDIENCE: $API_AUDIENCE"
 echo "API_IDENTIFIER: $API_IDENTIFIER"
